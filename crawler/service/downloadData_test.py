@@ -6,6 +6,8 @@ import re
 from crawler.utils.dateUtil import int2date_YMDHMS
 from selenium import webdriver
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+import threading
+import random
 
 
 
@@ -32,3 +34,13 @@ def getNewsDivList():
 #     print('*'*50)
 #     print(type(result))
 #     print(result)
+
+def print_task():
+    try:
+        print 10 / random.choice([0, 1, 2, 3])
+    except Exception as e:
+        print e
+    threading.Timer(random.randint(1,4),print_task).start()
+
+# threading.Timer(2,print_task).start()
+

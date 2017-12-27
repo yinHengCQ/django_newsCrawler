@@ -15,8 +15,8 @@ def getNewsDivList():
     dcap["phantomjs.page.settings.userAgent"] = (
         "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.9; rv:25.0) Gecko/20100101 Firefox/25.0 ")
 
-    obj = webdriver.PhantomJS(executable_path='C:/Users/Administrator/phantomjs/bin/phantomjs.exe', desired_capabilities=dcap)  # 加载网址
-    obj.set_page_load_timeout(10)
+    obj = webdriver.PhantomJS(executable_path='D:/python/phantomjs/bin/phantomjs.exe', desired_capabilities=dcap)  # 加载网址
+    obj.set_page_load_timeout(30)
     obj.get('http://business.sohu.com/')  # 打开网址
     try:
         soup = BeautifulSoup(obj.page_source).body
@@ -31,7 +31,7 @@ def getNewsDivList():
     # list_str= str(soup.find_all('div',attrs={"data-newsid":not "","data-role":"news-item"}))
     # return list_str.split('</div>, <div')
 
-def saveData():
+def getData():
     for var in getNewsDivList():
         soup = BeautifulSoup(var)
 
@@ -42,7 +42,7 @@ def saveData():
         url = unicode.encode('http:' + BeautifulSoup(str(soup.h4)).a.get("href"), 'utf-8')
 
         # 获取发布来源
-        publisher = unicode.encode(BeautifulSoup(str(soup.select('span[class="name"]'))).a.text, 'utf-8')
+        publisher = 'u'+unicode.encode(BeautifulSoup(str(soup.select('span[class="name"]'))).a.text, 'utf-8')
 
         #获取当前评论
         comment_count=unicode.encode(BeautifulSoup(str(soup.select('a[class="com"]'))).span.text, 'utf-8')
@@ -62,3 +62,11 @@ def saveData():
             orgin.save()
         except news.DoesNotExist:
             news.objects.create(id=id,title=title,url=url,publisher=publisher,comment_count=comment_count,pub_date=pub_date)
+
+
+def saveData():
+    try:
+        getData()
+    except Exception as e:
+        print e
+
