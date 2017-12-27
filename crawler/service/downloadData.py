@@ -6,6 +6,7 @@ from crawler.utils.dateUtil import int2date_YMDHMS
 from crawler.models import news
 from selenium import webdriver
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+import time
 
 
 
@@ -23,7 +24,8 @@ def getNewsDivList():
         return list_str.split('</div>, <div')
     except Exception as e:
         print e
-    obj.quit()  # 关闭浏览器。当出现异常时记得在任务浏览器中关闭PhantomJS，因为会有多个PhantomJS在运行状态，影响电脑性能
+    finally:
+        obj.quit()  # 关闭浏览器。当出现异常时记得在任务浏览器中关闭PhantomJS，因为会有多个PhantomJS在运行状态，影响电脑性能
     # html=urllib2.urlopen('http://business.sohu.com/').read()
     # soup=BeautifulSoup(html).html
     # list_str= str(soup.find_all('div',attrs={"data-newsid":not "","data-role":"news-item"}))
@@ -53,4 +55,10 @@ def saveData():
         id = re.sub('\D', '', url)
 
         #保存数据
-        news.objects.update_or_create(id=id,title=title,url=url,publisher=publisher,comment_count=comment_count,pub_date=pub_date)
+        # news.objects.update_or_create(id=id,title=title,url=url,publisher=publisher,comment_count=comment_count,pub_date=pub_date)
+        try:
+            orgin=news.objects.get(id=id)
+            orgin.comment_count=comment_count
+            orgin.save()
+        except news.DoesNotExist:
+            news.objects.create(id=id,title=title,url=url,publisher=publisher,comment_count=comment_count,pub_date=pub_date)

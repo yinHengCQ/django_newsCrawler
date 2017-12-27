@@ -8,6 +8,8 @@ class news(models.Model):
     pub_date=models.CharField(max_length=1024)
     comment_count=models.CharField(max_length=32,default='0')
     url=models.CharField(max_length=1024)
+    createTime=models.DateTimeField(auto_now_add=True)
+    modifyTime=models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.title
