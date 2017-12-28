@@ -8,21 +8,23 @@ from selenium import webdriver
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 import threading
 import random
+from crawler.utils.disguiseUtil import getRandomUserAgent
 
 
 
 def getNewsDivList():
     dcap = dict(DesiredCapabilities.PHANTOMJS)  # 设置userAgent
-    dcap["phantomjs.page.settings.userAgent"] = (
-        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.9; rv:25.0) Gecko/20100101 Firefox/25.0 ")
+    dcap["phantomjs.page.settings.userAgent"] = getRandomUserAgent()
+
 
     obj = webdriver.PhantomJS(executable_path='C:/Users/Administrator/phantomjs/bin/phantomjs.exe', desired_capabilities=dcap)  # 加载网址
     obj.set_page_load_timeout(10)
-    obj.get('http://business.sohu.com/')  # 打开网址
+    obj.get('http://127.0.0.1:8080/SSH_Demo_Maven/showAll.do')  # 打开网址
     try:
         soup = BeautifulSoup(obj.page_source).body
-        list_str = str(soup.find_all('div', attrs={"data-newsid": not "", "data-role": "news-item"}))
-        return list_str.split('</div>, <div')
+        print soup
+        # list_str = str(soup.find_all('div', attrs={"data-newsid": not "", "data-role": "news-item"}))
+        # return list_str.split('</div>, <div')
     except Exception as e:
         print e
     obj.quit()  # 关闭浏览器。当出现异常时记得在任务浏览器中关闭PhantomJS，因为会有多个PhantomJS在运行状态，影响电脑性能
@@ -44,3 +46,4 @@ def print_task():
 
 # threading.Timer(2,print_task).start()
 
+getNewsDivList()

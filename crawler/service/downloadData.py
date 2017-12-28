@@ -1,29 +1,32 @@
 #coding=utf-8
-import urllib2
 from bs4 import BeautifulSoup
 import re
 from crawler.utils.dateUtil import int2date_YMDHMS
+from crawler.utils.disguiseUtil import getRandomUserAgent,getRandomReferer
 from crawler.models import news
 from selenium import webdriver
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
-import time
+import logging
 
-
+logger=logging.getLogger('django')
 
 def getNewsDivList():
     dcap = dict(DesiredCapabilities.PHANTOMJS)  # 设置userAgent
-    dcap["phantomjs.page.settings.userAgent"] = (
-        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.9; rv:25.0) Gecko/20100101 Firefox/25.0 ")
+    dcap["phantomjs.page.settings.userAgent"] = getRandomUserAgent()
+    dcap["phantomjs.page.settings.referer"]=getRandomReferer('news','http://www.sohu.com/')
 
-    obj = webdriver.PhantomJS(executable_path='D:/python/phantomjs/bin/phantomjs.exe', desired_capabilities=dcap)  # 加载网址
-    obj.set_page_load_timeout(30)
-    obj.get('http://business.sohu.com/')  # 打开网址
     try:
+        logger.info(u'正在抓取网页数据...')
+        obj = webdriver.PhantomJS(executable_path='C:/Users/Administrator/phantomjs/bin/phantomjs.exe',
+                                  desired_capabilities=dcap)  # 加载网址
+        # obj = webdriver.PhantomJS(desired_capabilities=dcap)  # 加载网址
+        obj.set_page_load_timeout(30)
+        obj.get('http://business.sohu.com/')  # 打开网址
         soup = BeautifulSoup(obj.page_source).body
         list_str = str(soup.find_all('div', attrs={"data-newsid": not "", "data-role": "news-item"}))
         return list_str.split('</div>, <div')
     except Exception as e:
-        print e
+        logger.error(u'下载网页数据时异常:'+e.message)
     finally:
         obj.quit()  # 关闭浏览器。当出现异常时记得在任务浏览器中关闭PhantomJS，因为会有多个PhantomJS在运行状态，影响电脑性能
     # html=urllib2.urlopen('http://business.sohu.com/').read()
@@ -42,7 +45,7 @@ def getData():
         url = unicode.encode('http:' + BeautifulSoup(str(soup.h4)).a.get("href"), 'utf-8')
 
         # 获取发布来源
-        publisher = 'u'+unicode.encode(BeautifulSoup(str(soup.select('span[class="name"]'))).a.text, 'utf-8')
+        publisher = unicode.encode(BeautifulSoup(str(soup.select('span[class="name"]'))).a.text, 'utf-8')
 
         #获取当前评论
         comment_count=unicode.encode(BeautifulSoup(str(soup.select('a[class="com"]'))).span.text, 'utf-8')
@@ -68,5 +71,5 @@ def saveData():
     try:
         getData()
     except Exception as e:
-        print e
+        logger.error(u'抓取并保存数据异常：'+e.message)
 

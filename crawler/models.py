@@ -13,3 +13,7 @@ class news(models.Model):
 
     def __str__(self):
         return self.title
+
+
+# class crawlerManager(models.Model):
+#     targetUrl=models.CharField(max_length=1024)
