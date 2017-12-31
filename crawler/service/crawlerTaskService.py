@@ -5,23 +5,28 @@ import random
 import time
 from downloadData import saveData
 import logging
+from browserService import check_key,check_status_by_key
 
 logger=logging.getLogger('django')
 
-def startTask():
+def startTask(key):
     logger.info(u'启动爬虫任务')
-    threading._start_new_thread(prepareTask,())
+    check_key(key)
+    threading._start_new_thread
+    threading._start_new_thread(prepareTask,(key,))
 
-def prepareTask():
+def prepareTask(key):
     logger.info(u'开始前准备...')
     time.sleep(10)
     logger.info(u'开始爬虫任务')
-    runTask()
+    runTask(key)
 
-def runTask():
+def runTask(key):
+    time.sleep(5)
     logger.info(u'爬虫定时任务开始')
-    saveData()
+    saveData(key)
     logger.info(u'本次爬虫定时任务完成')
     time.sleep(random.randint(10,30))
-    threading.Timer(random.randint(10,30),runTask())
+    check_status_by_key(key)
+    threading.Timer(random.randint(10,30),runTask(key))
 

@@ -14,6 +14,11 @@ class news(models.Model):
     def __str__(self):
         return self.title
 
+class browserRecord(models.Model):
+    key=models.CharField(primary_key=True,max_length=255)
+    status=models.BooleanField(default=False)
+    totleFail=models.IntegerField()
+
 
 # class crawlerManager(models.Model):
 #     targetUrl=models.CharField(max_length=1024)

@@ -2,4 +2,4 @@
 from crawler.service.crawlerTaskService import startTask
 
 def newsCrawle():
-    startTask()
+    startTask('http://business.sohu.com/')

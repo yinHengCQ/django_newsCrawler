@@ -36,12 +36,13 @@ def getRandomUserAgent():
         "Mozilla/5.0 (Windows; U; Windows NT 5.1; ) AppleWebKit/534.12 (KHTML, like Gecko) Maxthon/3.0 Safari/534.12",
         "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 2.0.50727; TheWorld)"]
 
-    return User_Agent_List[random.randint(1,len(User_Agent_List))]
+    return User_Agent_List[random.randint(0,len(User_Agent_List)-1)]
 
 
 def getRandomReferer(modelName,default_url):
     try:
         list = news.objects.raw('select url from ' + modelName + ' limit 10')
-        return list[random.randint(1,10)]
+        result= list[random.randint(0,9)]
     except Exception:
-        return default_url
+        result= default_url
+    return result
