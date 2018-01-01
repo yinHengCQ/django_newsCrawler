@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load staticfiles %}
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{% static "css/bootstrap.css"%}">
+    <script type="text/javascript" src="{% static "js/JQuery.js"%}"></script>
+    <script type="text/javascript" src="{% static "js/bootstrap.js"%}"></script>
+    <title>爬虫数据</title>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="btn btn-info" role="button">返回主页</a>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr class="active">
+                        <th>标题</th>
+                        <th>发布者</th>
+                        <th>发布时间</th>
+                        <th>链接地址</th>
+                        <th>当前评论数</th>
+                    </tr>
+                </thead>
+                {% for var in list_data %}
+                    <tbody>
+                        <tr>
+                        <td>{{ var.title }}</td>
+                        <td>{{ var.publisher }}</td>
+                        <td>{{ var.pub_date }}</td>
+                        <td>{{ var.url }}</td>
+                        <td>{{ var.comment_count }}</td>
+                        </tr>
+                    </tbody>
+                {% endfor %}
+            </table>
+        </div>
+        <nav aria-label="Page navigation">
+            <ul class="pagination">
+                {% if list_data.has_previous %}
+                    <li>
+                        <a href="?page={{ list_data.previous_page_number }}" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                {% endif %}
+
+                {% for pg in list_data.paginator.page_range %}
+                    {% if list_data.number == pg %}
+                        <li class="active"><a href="?page={{ pg }}">{{ pg }}</a></li>
+                    {% else %}
+                        {% if list_data.number > pg|add:-5 and list_data.number < pg|add:5 %}
+                            <li><a href="?page={{ pg }}">{{ pg }}</a></li>
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+
+                {% if list_data.has_next %}
+                    <li>
+                        <a href="?page={{ list_data.next_page_number }}" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+</body>
+</html>

@@ -39,8 +39,8 @@ def getNewsDivList(key):
 
 def getData(key):
     for var in getNewsDivList(key):
-        #soup=BeautifulSoup(var)
-        soup = BeautifulSoup(unicode(var,'unicode-escape'))
+        soup=BeautifulSoup(var)
+        # soup = BeautifulSoup(unicode(var,'unicode-escape'))
 
         # 获取标题
         title = unicode.encode(soup.h4.text, 'utf-8').replace('\n', '').replace('\r', '').replace(' ', '')
@@ -50,11 +50,11 @@ def getData(key):
 
         # 获取发布来源
         publisher = unicode.encode(BeautifulSoup(str(soup.select('span[class="name"]'))).a.text, 'utf-8')
-        publisher = unicode(publisher, 'unicode-escape')
+        # publisher = unicode(publisher, 'unicode-escape')
 
         #获取当前评论
         comment_count=unicode.encode(BeautifulSoup(str(soup.select('a[class="com"]'))).span.text, 'utf-8')
-        comment_count = unicode(comment_count, 'unicode-escape')
+        # comment_count = unicode(comment_count, 'unicode-escape')
 
         # 获取发布时间
         pub_time = BeautifulSoup(str(soup.select('span[class="time"]'))).span.get('data-val')

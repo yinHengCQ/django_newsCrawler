@@ -1,12 +1,17 @@
 #conding=uft-8
 from django.shortcuts import render
-from service.downloadData import saveData
 from django.http import HttpResponse
 from crawler.task.crawlerTask import newsCrawle
+from crawler.service.newsService import get_list_by_page
 
 # Create your views here.
 
 def getTitleSave(request):
-    # saveData()
     newsCrawle()
     return HttpResponse('OK')
+
+def getIndex(request):
+    return render(request,'index.html')
+
+def getData(request):
+    return render(request,'showData.html',{'list_data':get_list_by_page(request)})

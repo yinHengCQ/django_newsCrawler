@@ -27,6 +27,6 @@ def runTask(key):
     saveData(key)
     logger.info(u'本次爬虫定时任务完成')
     time.sleep(random.randint(10,30))
-    check_status_by_key(key)
+    # check_status_by_key(key)
     threading.Timer(random.randint(10,30),runTask(key))
 
