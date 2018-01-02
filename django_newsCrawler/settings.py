@@ -11,8 +11,13 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 """
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+from __future__ import absolute_import
 import os
 import logging,django.utils.log,logging.handlers
+import djcelery
+from celery.schedules import crontab
+from datetime import timedelta
+
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -39,6 +44,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'crawler',
+    'djcelery',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -148,3 +154,13 @@ STATIC_URL = '/static/'
 STATIC_ROOT=os.path.join(BASE_DIR,'static')
 
 STATICFILES_DIRS=(os.path.join(BASE_DIR,'static/bootstrap'),)
+
+
+###Broker
+
+djcelery.setup_loader()
+BROKER_URL = 'redis://:root@127.0.0.1:6379/0'
+CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
+CELERYD_LOG_FILE="C:/Users/Administrator/Django_Log/celery/log/%n%I.log"
+CELERYBEAT_LOG_FILE="C:/Users/Administrator/Django_Log/celery/beat/beat.log"
+

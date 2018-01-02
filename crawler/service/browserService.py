@@ -7,7 +7,11 @@ logger=logging.getLogger('django')
 
 def __get_status_by_key(key):
     try:
-        return browserRecord.objects.get(key=key).status
+        try:
+            orgin =browserRecord.objects.get(key=key)
+        except browserRecord.DoesNotExist:
+            orgin =browserRecord.objects.create(key=key, status=False, totleFail=0)
+        return orgin.status
     except Exception as e:
         logger.error(u'获取浏览器当前状态异常:'+e.message)
         return True
@@ -35,15 +39,6 @@ def __add_fail_count_key(key):
         obj.save()
     except Exception as e:
         logger.error(u'保存浏览器失败记录异常:' + e.message)
-
-def check_key(key):
-    try:
-        try:
-            browserRecord.objects.get(key=key)
-        except browserRecord.DoesNotExist:
-            browserRecord.objects.create(key=key,status=False,totleFail=0)
-    except Exception as e:
-        logger.error(u'检查浏览器key异常：'+e.message)
 
 def check_status_by_key(key):
     if __get_status_by_key(key):

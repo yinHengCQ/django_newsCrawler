@@ -19,6 +19,14 @@ class browserRecord(models.Model):
     status=models.BooleanField(default=False)
     totleFail=models.IntegerField()
 
+class proxyIP(models.Model):
+    ip_address=models.CharField(max_length=20)
+    ip_port=models.IntegerField()
+    address=models.CharField(max_length=10)
+    ip_type=models.CharField(max_length=5)
+    source=models.CharField(max_length=30)
+
+
 
 # class crawlerManager(models.Model):
 #     targetUrl=models.CharField(max_length=1024)
