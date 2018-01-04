@@ -1,17 +1,36 @@
 #coding=utf-8
 
-import random
-import time
-from downloadData import saveData
+
+from downloadData import startCrawler
 import logging
-from browserService import check_status_by_key
+from django.core.cache import cache
 
-logger=logging.getLogger('django')
 
-def runNewsCrawler(key):
-    logger.info(u'启动新闻爬虫')
-    time.sleep(random.randint(1,10))
-    saveData(key)
-    check_status_by_key(key)
-    logger.info(u'本次新闻爬虫完成')
+__logger=logging.getLogger('django')
 
+def addNewsCrawler():
+    __logger.info(u'添加新闻爬虫任务')
+    try:
+        orgin = cache.get('task_list')
+        if orgin==None:
+            orgin=[]
+        orgin.append('newsCrawler')
+        cache.set('task_list', orgin)
+    except Exception as e:
+        __logger.error(u'添加新闻爬虫任务异常：'+e.message)
+
+def addProxyCrawler():
+    __logger.info(u'添加代理IP爬虫任务')
+    try:
+        orgin = cache.get('task_list')
+        if orgin==None:
+            orgin=[]
+        orgin.append('proxyIpCrawler')
+        cache.set('task_list', orgin)
+    except Exception as e:
+        __logger.error(u'添加代理IP爬虫任务异常：'+e.message)
+
+
+def runTaskCache():
+    __logger.info(u'开始爬虫任务...')
+    startCrawler()

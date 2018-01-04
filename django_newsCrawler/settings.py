@@ -132,6 +132,16 @@ LOGGING = {
     },
 }
 
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://:root@//127.0.0.1:6379/0",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
+}
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
@@ -155,12 +165,10 @@ STATIC_ROOT=os.path.join(BASE_DIR,'static')
 
 STATICFILES_DIRS=(os.path.join(BASE_DIR,'static/bootstrap'),)
 
-
 ###Broker
-
 djcelery.setup_loader()
 BROKER_URL = 'redis://:root@127.0.0.1:6379/0'
 CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
-CELERYD_LOG_FILE="C:/Users/Administrator/Django_Log/celery/log/%n%I.log"
-CELERYBEAT_LOG_FILE="C:/Users/Administrator/Django_Log/celery/beat/beat.log"
+CELERYD_LOG_FILE="C:/Users/Administrator/Django_Log/celery/%n%I.log"
+CELERYBEAT_LOG_FILE="C:/Users/Administrator/Django_Log/celery/beat.log"
 

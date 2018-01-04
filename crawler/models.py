@@ -14,12 +14,8 @@ class news(models.Model):
     def __str__(self):
         return self.title
 
-class browserRecord(models.Model):
-    key=models.CharField(primary_key=True,max_length=255)
-    status=models.BooleanField(default=False)
-    totleFail=models.IntegerField()
-
 class proxyIP(models.Model):
+    id=models.CharField(primary_key=True,max_length=25)
     ip_address=models.CharField(max_length=20)
     ip_port=models.IntegerField()
     address=models.CharField(max_length=10)
@@ -27,6 +23,3 @@ class proxyIP(models.Model):
     source=models.CharField(max_length=30)
 
 
-
-# class crawlerManager(models.Model):
-#     targetUrl=models.CharField(max_length=1024)

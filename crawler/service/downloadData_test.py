@@ -1,11 +1,11 @@
 #coding=utf-8
-# import urllib2
-# from bs4 import BeautifulSoup
+import urllib2
+from bs4 import BeautifulSoup
 # import time
 # import re
 # from crawler.utils.dateUtil import int2date_YMDHMS
-# from selenium import webdriver
-# from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+from selenium import webdriver
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 # import threading
 # import random
 # from crawler.utils.disguiseUtil import getRandomUserAgent
@@ -29,6 +29,11 @@
 #         print e
 #     obj.quit()  # 关闭浏览器。当出现异常时记得在任务浏览器中关闭PhantomJS，因为会有多个PhantomJS在运行状态，影响电脑性能
 
+# html=urllib2.urlopen('http://business.sohu.com/').read()
+# soup=BeautifulSoup(html).html
+# list_str= str(soup.find_all('div',attrs={"data-newsid":not "","data-role":"news-item"}))
+# return list_str.split('</div>, <div')
+
 
 # for var in getNewsDivList():
 #     soup = BeautifulSoup(var)
@@ -46,5 +51,32 @@
 
 # threading.Timer(2,print_task).start()
 
-a= '\u8bc1\u76d1\u4f1a\uff1a\u9ad8\u5ea6\u91cd\u89c6\u884c'
-print unicode(a,'unicode-escape')
+# def __get_crawler(default_referer):
+#     return dict(DesiredCapabilities.PHANTOMJS)  # 设置userAgent
+
+# dcap = __get_crawler('1')
+# dcap["phantomjs.page.settings.userAgent"] = "MQQBrowser/25 (Linux; U; 2.3.3; zh-cn; HTC Desire S Build/GRI40;480*800)"
+#
+#
+# obj = webdriver.PhantomJS(executable_path='C:/Users/Administrator/phantomjs/bin/phantomjs.exe', desired_capabilities=dcap)  # 加载网址
+# obj.set_page_load_timeout(10)
+# obj.get('http://www.xicidaili.com/nn/')  # 打开网址
+# try:
+#     soup = BeautifulSoup(obj.page_source).body
+#     print soup
+#     # list_str = str(soup.find_all('div', attrs={"data-newsid": not "", "data-role": "news-item"}))
+#     # return list_str.split('</div>, <div')
+#     print '*' * 150
+#     obj.get('http://www.baidu.com/')
+#     soup2 = BeautifulSoup(obj.page_source).body
+#     print soup2
+# except Exception as e:
+#     print e
+# obj.quit()  # 关闭浏览器。当出现异常时记得在任务浏览器中关闭PhantomJS，因为会有多个PhantomJS在运行状态，影响电脑性能
+
+
+list=[]
+list.append(1)
+print len(list)
+print list[0]
+

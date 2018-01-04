@@ -1,6 +1,5 @@
 #coding=utf-8
 import random
-from crawler.models import news
 import logging
 
 
@@ -39,10 +38,10 @@ def getRandomUserAgent():
     return User_Agent_List[random.randint(0,len(User_Agent_List)-1)]
 
 
-def getRandomReferer(modelName,default_url):
-    try:
-        list = news.objects.raw('select url from ' + modelName + ' limit 10')
-        result= list[random.randint(0,9)]
-    except Exception:
-        result= default_url
-    return result
+def getRandomReferer():
+    Referer_List=[
+        'https://www.baidu.com/',
+        'https://www.sogou.com/',
+        'https://www.so.com/'
+    ]
+    return  Referer_List[random.randint(0,len(Referer_List)-1)]
