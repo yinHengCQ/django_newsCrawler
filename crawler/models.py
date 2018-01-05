@@ -20,6 +20,8 @@ class proxyIP(models.Model):
     ip_port=models.IntegerField()
     address=models.CharField(max_length=10)
     ip_type=models.CharField(max_length=5)
-    source=models.CharField(max_length=30)
-
+    source = models.CharField(max_length=30)
+    response_time=models.FloatField()
+    createTime=models.DateTimeField(auto_now_add=True)
+    modifyTime=models.DateTimeField(auto_now=True)
 

@@ -25,10 +25,12 @@ def __run(list_task):
     dcap = dict(DesiredCapabilities.PHANTOMJS)  # 设置userAgent
     dcap["phantomjs.page.settings.userAgent"] = getRandomUserAgent()
     dcap["phantomjs.page.settings.referer"]=getRandomReferer()
+    # service_args=['--proxy=42.84.231.99:80']
     try:
-        # obj = webdriver.PhantomJS(executable_path='C:/Users/Administrator/phantomjs/bin/phantomjs.exe',
-        #                           desired_capabilities=dcap)  # 加载网址
-        obj = webdriver.PhantomJS(executable_path='/root/phantomjs/bin/phantomjs',desired_capabilities=dcap)  # 加载网址
+        obj = webdriver.PhantomJS(executable_path='C:/Users/Administrator/phantomjs/bin/phantomjs.exe',
+                                  desired_capabilities=dcap)  # 加载网址
+        # obj = webdriver.PhantomJS(executable_path='/root/phantomjs/bin/phantomjs',desired_capabilities=dcap)  # 加载网址
+        # obj = webdriver.PhantomJS(executable_path='C:/Users/Administrator/phantomjs/bin/phantomjs.exe', desired_capabilities=dcap,service_args=service_args)  # 加载网址
         obj.set_page_load_timeout(10)
         logger.info(u'开始抓取网页数据...')
         for task_name in list_task:
@@ -36,12 +38,11 @@ def __run(list_task):
                 key='http://business.sohu.com/'
                 obj.get(key)
                 threading._start_new_thread(__save_news_data,(key,BeautifulSoup(obj.page_source).body,))
-                time.sleep(5)
             elif task_name=='proxyIpCrawler':
                 key='http://www.xicidaili.com/nn/'
                 obj.get(key)
                 threading._start_new_thread(__save_proxy_ip_data,(key,BeautifulSoup(obj.page_source).body,))
-                time.sleep(5)
+            time.sleep(5)
     except Exception as e:
         logger.error(u'下载网页数据时异常:' + e.message)
     finally:
@@ -54,8 +55,8 @@ def __run(list_task):
 def __get_news_data(key,responseBody):
     list_str = str(responseBody.find_all('div', attrs={"data-newsid": not "", "data-role": "news-item"}))
     for var in list_str.split('</div>, <div'):
-        # soup=BeautifulSoup(var)
-        soup = BeautifulSoup(unicode(var,'unicode-escape'))
+        soup=BeautifulSoup(var)
+        # soup = BeautifulSoup(unicode(var,'unicode-escape'))
 
         # 获取标题
         title = unicode.encode(soup.h4.text, 'utf-8').replace('\n', '').replace('\r', '').replace(' ', '')
@@ -65,11 +66,11 @@ def __get_news_data(key,responseBody):
 
         # 获取发布来源
         publisher = unicode.encode(BeautifulSoup(str(soup.select('span[class="name"]'))).a.text, 'utf-8')
-        publisher = unicode(publisher, 'unicode-escape')
+        # publisher = unicode(publisher, 'unicode-escape')
 
         #获取当前评论
         comment_count=unicode.encode(BeautifulSoup(str(soup.select('a[class="com"]'))).span.text, 'utf-8')
-        comment_count = unicode(comment_count, 'unicode-escape')
+        # comment_count = unicode(comment_count, 'unicode-escape')
 
         # 获取发布时间
         pub_time = BeautifulSoup(str(soup.select('span[class="time"]'))).span.get('data-val')
@@ -97,20 +98,24 @@ def __get_proxy_ip_data(key,responseBody):
     for var in list:
         list_str=BeautifulSoup(var).find_all('td')
 
-        ip=str(list_str[1].text) #获取代理IP
-        port=str(list_str[2].text).replace('\n', '').replace('\r', '').replace(' ', '') #获取端口号
-        address=BeautifulSoup(list_str[3].text).text.replace('\n', '').replace('\r', '').replace(' ', '')#获取服务器地址
-        type=str(list_str[5].text) #获取类型
-        id=ip+port #生成id
+        response_time = float(re.sub(u'秒', '', BeautifulSoup(str(list_str[6])).div['title']))#获取响应时间
+        if response_time<1:
+            ip=str(list_str[1].text) #获取代理IP
+            port=str(list_str[2].text).replace('\n', '').replace('\r', '').replace(' ', '') #获取端口号
+            address=BeautifulSoup(list_str[3].text).text.replace('\n', '').replace('\r', '').replace(' ', '')#获取服务器地址
+            #address=unicode(str(address),'unicode-escape').replace('\n', '').replace('\r', '').replace(' ', '')
+            type=str(list_str[5].text) #获取类型
+            id=ip+port #生成id
 
-        try:
-            proxyIP.objects.update_or_create(id=id,ip_address=ip,ip_port=port,address=address,ip_type=type,source=key)
-        except Exception as e:
-            logger.error(u'保存代理Ip异常：'+e.message)
 
-def __save_proxy_ip_data(key):
+            try:
+                proxyIP.objects.update_or_create(id=id,ip_address=ip,ip_port=port,address=address,ip_type=type,source=key,response_time=response_time)
+            except Exception as e:
+                logger.error(u'保存代理Ip异常：'+e.message)
+
+def __save_proxy_ip_data(key,responseBody):
     try:
-        __get_proxy_ip_data(key)
+        __get_proxy_ip_data(key,responseBody)
     except Exception as e:
         logger.error(u'抓取并保存代理IP数据异常'+e.message)
 

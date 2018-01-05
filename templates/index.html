@@ -15,7 +15,18 @@
                 <h3 class="panel-title">爬虫状态</h3>
             </div>
             <div class="panel-body">
-                222
+                <table class="table">
+                    {% for var in list_state %}
+                         <tr>
+                            <td class="text-info">{{ var.name }}</td>
+                            {% if var.enabled %}
+                                <td class="text-success">启用中</td>
+                            {% else %}
+                                <td class="text-danger">未启用</td>
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
+                </table>
             </div>
         </div>
         <div class="panel panel-info">
