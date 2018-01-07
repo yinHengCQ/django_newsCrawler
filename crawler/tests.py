@@ -50,6 +50,7 @@ from bs4 import BeautifulSoup
 # print id
 # print pub_date
 
-b='1'
-a='http://search.51job.com/list/060000,000000,0000,00,9,99,%2B,2,'+b+'.html'
+a=unicode('\\u91cd\\u5e86-\\u6c5f\\u5317\\u533a')
+a=unicode(str(a), 'unicode-escape')
 print a
+print type(a)

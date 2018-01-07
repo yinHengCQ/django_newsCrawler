@@ -146,21 +146,21 @@ def __get_job51_data(key,responseBody):
 
         job = soup.p.a
         job_name = job.get('title')
-        # job_name=unicode(str(job_name),'unicode-escape')
+        # job_name=unicode(str(unicode(str(job_name), 'unicode-escape')), 'unicode-escape')
 
         job_url = job.get('href')
 
         company = str(soup.select('span[class="t2"]'))
         company_name = BeautifulSoup(company).a.get('title')
-        # company_name = unicode(str(company_name), 'unicode-escape')
+        # company_name = unicode(str(unicode(str(unicode(str(company_name), 'unicode-escape')), 'unicode-escape')),'unicode-escape')
 
         company_url = BeautifulSoup(company).a.get('href')
 
         job_address = BeautifulSoup(str(soup.select('span[class="t3"]'))).text.replace('[','').replace(']','')
-        # job_address = unicode(str(job_address), 'unicode-escape')
+        # job_address =  unicode(str(unicode(str(unicode(str(job_address), 'unicode-escape')), 'unicode-escape')),'unicode-escape')
 
         job_salary = BeautifulSoup(str(soup.select('span[class="t4"]'))).text.replace('[','').replace(']','')
-        # job_salary = unicode(str(job_salary), 'unicode-escape')
+        # job_salary = unicode(str(unicode(str(unicode(str(job_salary), 'unicode-escape')), 'unicode-escape')),'unicode-escape')
 
         id = int(soup.input.get('value'))
 
@@ -178,7 +178,7 @@ def __get_job51_data(key,responseBody):
             job51.objects.update_or_create(id=id,job_name=job_name,job_url=job_url,company_name=company_name,company_url=company_url,
                 job_address=job_address,job_salary=job_salary,pub_date=pub_date,salary_low=salary_low,salary_high=salary_high)
         except Exception as e:
-            print e
+            logger.error(u'保存job51异常：' + e.message)
 
 def __save_job51_data(key,responseBody):
     try:

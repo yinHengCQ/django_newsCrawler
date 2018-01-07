@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load staticfiles %}
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{% static "css/bootstrap.css"%}">
+    <script type="text/javascript" src="{% static "js/JQuery.js"%}"></script>
+    <script type="text/javascript" src="{% static "js/bootstrap.js"%}"></script>
+    <title>爬虫数据</title>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="btn btn-info" role="button">返回主页</a>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr class="active">
+                        <th>职位名称</th>
+                        <th>职位链接</th>
+                        <th>所属公司</th>
+                        <th>公司链接</th>
+                        <th>工作地点</th>
+                        <th>薪资</th>
+                        <th>发布时间</th>
+                    </tr>
+                </thead>
+                {% for var in list_data %}
+                    <tbody>
+                        <tr>
+                        <td>{{ var.job_name }}</td>
+                        <td>{{ var.job_url }}</td>
+                        <td>{{ var.company_name }}</td>
+                        <td>{{ var.company_url }}</td>
+                        <td>{{ var.job_address }}</td>
+                        <td>{{ var.job_salary }}</td>
+                        <td>{{ var.pub_date }}</td>
+                        </tr>
+                    </tbody>
+                {% endfor %}
+            </table>
+        </div>
+        <nav aria-label="Page navigation">
+            <ul class="list-group-item-text text-right">总数据{{ list_data.paginator.count }}条</ul>
+            <ul class="pagination">
+                {% if list_data.has_previous %}
+                    <li>
+                        <a href="?page={{ list_data.previous_page_number }}" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                {% endif %}
+
+                {% for pg in list_data.paginator.page_range %}
+                    {% if list_data.number == pg %}
+                        <li class="active"><a href="?page={{ pg }}">{{ pg }}</a></li>
+                    {% else %}
+                        {% if list_data.number > pg|add:-5 and list_data.number < pg|add:5 %}
+                            <li><a href="?page={{ pg }}">{{ pg }}</a></li>
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+
+                {% if list_data.has_next %}
+                    <li>
+                        <a href="?page={{ list_data.next_page_number }}" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+</body>
+</html>
