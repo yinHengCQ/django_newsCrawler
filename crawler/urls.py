@@ -8,4 +8,5 @@ urlpatterns = [
 
     url('^$',views.getIndex),
     url('showData/$',views.getData),
+    url('tt/',views.gettt)
 ]

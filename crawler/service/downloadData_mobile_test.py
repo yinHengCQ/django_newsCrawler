@@ -122,28 +122,23 @@ def salary_unicode2int(salary):
         return {'low':low,'high':high}
 
 def get_proxy_ip_data(responseBody):
-    list= str(responseBody).split(',')
-    del list[0]
+    list= str(responseBody).replace('</a><a','</a>,<a').split(',')
     for var in list:
         soup=BeautifulSoup(var)
 
-        job = soup.p.a
-        job_name = job.get('title')
-        job_url = job.get('href')
-        company = str(soup.select('span[class="t2"]'))
-        company_name = BeautifulSoup(company).a.get('title')
-        company_url = BeautifulSoup(company).a.get('href')
-        job_address = BeautifulSoup(str(soup.select('span[class="t3"]'))).text.replace('[','').replace(']','')
-        job_salary = BeautifulSoup(str(soup.select('span[class="t4"]'))).text.replace('[','').replace(']','')
-        id = int(soup.input.get('value'))
-        pub_date = BeautifulSoup(str(soup.select('span[class="t5"]'))).text.replace('[','').replace(']','')
+        job_name = soup.h3.text
+        job_url = soup.a.get('href')
+        company_name = soup.aside.text
+        job_address = soup.i.text
+        job_salary = soup.em.text
         salary_temp = salary_unicode2int(job_salary)
         salary_low = salary_temp.get('low')
         salary_high = salary_temp.get('high')
+        id=soup.b.get('value')
 
         try:
-            job51.objects.update_or_create(id=id,job_name=job_name,job_url=job_url,company_name=company_name,company_url=company_url,
-                job_address=job_address,job_salary=job_salary,pub_date=pub_date,salary_low=salary_low,salary_high=salary_high)
+            job51.objects.update_or_create(id=id,job_name=job_name,job_url=job_url,company_name=company_name,
+                job_address=job_address,job_salary=job_salary,salary_low=salary_low,salary_high=salary_high)
         except Exception as e:
             print e
 
@@ -153,7 +148,7 @@ def get_proxy_ip_data(responseBody):
 def ttt():
     dcap = dict(DesiredCapabilities.PHANTOMJS)  # 设置userAgent
     dcap[
-        "phantomjs.page.settings.userAgent"] = "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)"
+        "phantomjs.page.settings.userAgent"] = "Opera/9.80 (Android 2.3.4; Linux; Opera Mobi/build-1107180945; U; en-GB) Presto/2.8.149 Version/11.10"
     # service_args=['--proxy=42.84.231.99:80']
 
     obj = webdriver.PhantomJS(executable_path='C:/Users/Administrator/phantomjs/bin/phantomjs.exe',
@@ -164,14 +159,10 @@ def ttt():
     # obj.get('http://search.51job.com/list/060000,000000,0000,00,9,99,%2B,2,1.html')
     obj.get('http://search.51job.com/list/060000,000000,0000,00,9,99,%2B,2,1.html')
     try:
-        soup = BeautifulSoup(obj.page_source).select('#resultList')
-        # content = BeautifulSoup(str(soup)).find_all('div','el')
-        # get_proxy_ip_data(content)
-        page=re.sub('\D','',BeautifulSoup(str(BeautifulSoup(str(soup)).select('span[class="og_but"]'))).span.get('onclick'))
-        # page=BeautifulSoup(str(soup)).select('span[class="og_but"]')
-        print page
+        soup = BeautifulSoup(obj.page_source)
+        content = soup.select('.items')
+        get_proxy_ip_data(content)
     except Exception as e:
         print e
     finally:
         obj.quit()
-

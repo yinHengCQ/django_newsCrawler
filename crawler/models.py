@@ -25,3 +25,16 @@ class proxyIP(models.Model):
     createTime=models.DateTimeField(auto_now_add=True)
     modifyTime=models.DateTimeField(auto_now=True)
 
+class job51(models.Model):
+    id=models.IntegerField(primary_key=True)
+    job_name=models.CharField(max_length=100)
+    job_url=models.CharField(max_length=300)
+    company_name=models.CharField(max_length=60)
+    company_url=models.CharField(max_length=300)
+    job_address=models.CharField(max_length=20)
+    job_salary=models.CharField(max_length=20)
+    pub_date=models.CharField(max_length=10)
+    salary_low=models.IntegerField()
+    salary_high=models.IntegerField()
+    createTime=models.DateTimeField(auto_now_add=True)
+    modifyTime=models.DateTimeField(auto_now=True)

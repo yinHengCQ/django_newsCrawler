@@ -36,6 +36,7 @@
             </table>
         </div>
         <nav aria-label="Page navigation">
+            <ul class="list-group-item-text text-right">总数据{{ list_data.paginator.count }}条</ul>
             <ul class="pagination">
                 {% if list_data.has_previous %}
                     <li>
