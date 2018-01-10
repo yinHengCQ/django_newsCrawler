@@ -1,0 +1,12 @@
+django
+mysql-python
+beautifulsoup4
+celery
+celery-with-redis
+django-celery
+django-redis
+pip
+redis
+selenium
+setuptools
+wheel
