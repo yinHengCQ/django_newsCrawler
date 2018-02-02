@@ -10,3 +10,28 @@ redis
 selenium
 setuptools
 wheel
+
+
+#########################################
+if db is sqlserver,need(just for windows):
+pip install django-sqlserver django-pytds pyodbc django-pyodbc pypiwin32
+
+if os is linux,need pip install pymssql
+
+#########################################
+install mysql for linux steps:
+1.wget http://dev.mysql.com/get/mysql57-community-release-el7-8.noarch.rpm
+2.yum localinstall mysql57-community-release-el7-8.noarch.rpm
+3.yum repolist enabled | grep "mysql.*-community.*"
+4.yum install mysql-community-server
+5.systemctl start mysqld
+6.systemctl enable mysqld  #start when os start
+7.systemctl daemon-reload
+8.grep 'temporary password' /var/log/mysqld.log #get init pwd
+9.mysql> set password for 'root'@'localhost'=password('MyNewPass4!'); #change pwd
+10.(vi /etc/my.cnf) and add (validate_password = off),then (systemctl restart mysqld) #don't use mysql pwd rule
+   (vi /etc/my.cnf) and add (
+[mysqld]
+character_set_server=utf8
+init_connect='SET NAMES utf8'
+)
