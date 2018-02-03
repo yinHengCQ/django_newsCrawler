@@ -38,3 +38,18 @@ class job51(models.Model):
     salary_high=models.IntegerField()
     createTime=models.DateTimeField(auto_now_add=True)
     modifyTime=models.DateTimeField(auto_now=True)
+
+
+class JobDetail(models.Model):
+    id=models.CharField(max_length=10,primary_key=True)
+    job_name=models.CharField(max_length=100)
+    company_name=models.CharField(max_length=60)
+    company_desc=models.CharField(max_length=200)
+    job_jtag=models.CharField(max_length=300)
+    job_welfare=models.CharField(max_length=300)
+    job_detail_desc=models.CharField(max_length=5000)
+    job_type_desc=models.CharField(max_length=300)
+    job_keyword_desc = models.CharField(max_length=300)
+    work_address=models.CharField(max_length=200)
+    createTime=models.DateTimeField(auto_now_add=True)
+    modifyTime=models.DateTimeField(auto_now=True)

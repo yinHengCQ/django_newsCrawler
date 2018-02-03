@@ -8,5 +8,7 @@ urlpatterns = [
 
     url('^$',views.getIndex),
     url('showData/$',views.getData),
-    url('showJobData/$',views.getJob51Data)
+    url('showJobData/$',views.getJob51Data),
+    url('jobDataAnalysis/$',views.getJobDataAnalysis),
+    url('test/',views.test),
 ]

@@ -3,12 +3,14 @@ from bs4 import BeautifulSoup
 from crawler.utils.dateUtil import int2date_YMDHMS
 from crawler.utils.disguiseUtil import getRandomPCUserAgent,getRandomReferer
 from crawler.utils.strUtil import salary_unicode2int
-from crawler.models import news,proxyIP,job51
+from crawler.models import *
 from selenium import webdriver
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 import logging,threading,time,re,random
 from django.core.cache import cache
 from crawler.service.browserService import check_browser_state,save_browser_close_state,save_browser_open_state
+from lxml import etree
+
 
 
 
@@ -57,7 +59,15 @@ def __run(list_task):
                 time.sleep(random.randint(0,5))
                 obj.get(key)
                 threading._start_new_thread(__save_job51_data, (key, BeautifulSoup(obj.page_source).select('#resultList'),))
-            time.sleep(5)
+            elif task_name=='job51DetailCrawler':
+                job_urls=[]
+                try:job_urls=list(cache.get('job_urls'))
+                except Exception as e:logger.error(u'从redis获取job_urls异常:'+str(e))
+                for job_url in job_urls:
+                    obj.get(job_url)
+                    time.sleep(1)
+                    threading._start_new_thread(__save_job_detail, (obj.page_source,))
+            time.sleep(2)
     except Exception as e:
         logger.error(u'下载网页数据时异常:' + e.message)
     finally:
@@ -141,6 +151,7 @@ def __get_job51_data(key,responseBody):
     content = BeautifulSoup(str(responseBody)).find_all('div', 'el')
     list= str(content).split(',')
     del list[0]
+    job_urls=[]
     for var in list:
         soup=BeautifulSoup(var)
 
@@ -149,6 +160,7 @@ def __get_job51_data(key,responseBody):
         # job_name=unicode(str(unicode(str(job_name), 'unicode-escape')), 'unicode-escape')
 
         job_url = job.get('href')
+        job_urls.append(job_url)
 
         company = str(soup.select('span[class="t2"]'))
         company_name = BeautifulSoup(company).a.get('title')
@@ -175,16 +187,105 @@ def __get_job51_data(key,responseBody):
             salary_high = salary_temp.get('high')
 
         try:
-            job51.objects.update_or_create(id=id,job_name=job_name,job_url=job_url,company_name=company_name,company_url=company_url,
+            # job51.objects.update_or_create(id=id,job_name=job_name,job_url=job_url,company_name=company_name,company_url=company_url,
+            #     job_address=job_address,job_salary=job_salary,pub_date=pub_date,salary_low=salary_low,salary_high=salary_high)
+            try:
+                orign=job51.objects.get(id=id)
+                orign.job_salary=job_salary
+                orign.salary_low=salary_low
+                orign.salary_high=salary_high
+                orign.save()
+            except job51.DoesNotExist:
+                job51.objects.create(id=id,job_name=job_name,job_url=job_url,company_name=company_name,company_url=company_url,
                 job_address=job_address,job_salary=job_salary,pub_date=pub_date,salary_low=salary_low,salary_high=salary_high)
         except Exception as e:
-            logger.error(u'保存job51异常：' + e.message)
+            logger.error(u'保存job51异常：' + e.message+u'，当前数据id为：'+str(id)+u'，职位名称：'+job_name)
+    try:
+        cache.set('job_urls',job_urls)
+    except Exception as e:logger.error(u'向redis中保存job_urls异常：'+str(e))
 
 def __save_job51_data(key,responseBody):
     try:
         __get_job51_data(key,responseBody)
     except Exception as e:
-        logger.error(u'抓取并保存51job数据异常'+e.message)
+        logger.error(u'抓取并保存51job数据异常：'+e.message)
+##########################################################################################################################
+def __save_job_detail(page):
+    job_id=''
+    try:
+        page = page.replace('gb2312', 'utf-8')
+        job_id = unicode(etree.HTML(page).xpath('//input[@id="hidJobID"]/@value')[0])
+        job_name = ''
+        try:job_name=unicode(etree.HTML(page).xpath('//input[@id="hidJobID"]/../@title')[0])
+        except:pass
+        company_name = ''
+        try:company_name = unicode(etree.HTML(page).xpath('//p[@class="cname"][1]/a[1]/@title')[0])
+        except:pass
+        company_desc = ''
+        try:company_desc = unicode(etree.HTML(page).xpath('//p[@class="msg ltype"][1]/text()')[0]).strip()
+        except:pass
+
+        job_jtag_xpath = etree.HTML(page).xpath('//div[@class="jtag inbox"][1]/div[1]/span')
+        job_jtag = ''
+        try:
+            for var_path in job_jtag_xpath: job_jtag += (unicode(var_path.xpath('em[1]/@class')[0]) + '-' + unicode(
+                var_path.xpath('text()')[0])) + ','
+            job_jtag = job_jtag[:-1]
+        except:pass
+
+        job_welfare_xpath = etree.HTML(page).xpath('//div[@class="jtag inbox"][1]/p[1]/span')
+        job_welfare = ''
+        try:
+            for var_path in job_welfare_xpath: job_welfare += unicode(var_path.xpath('text()')[0]) + ','
+            job_welfare = job_welfare[:-1]
+        except:pass
+
+        job_desc_xpath = etree.HTML(page).xpath('//div[@class="bmsg job_msg inbox"][1]/*')
+        job_detail_desc = ''
+        try:
+            for var_path in job_desc_xpath[:-3]: job_detail_desc += unicode(var_path.xpath('string(.)'))
+            job_detail_desc = re.sub('\s+', '\n', job_detail_desc)
+            if job_detail_desc == '':
+                job_detail_desc = unicode(BeautifulSoup(page).find(name='div', attrs={'class': 'bmsg job_msg inbox'})).replace('<br/>', '^')
+                job_detail_desc = unicode(etree.HTML(job_detail_desc).xpath('//div[@class="bmsg job_msg inbox"][1]/text()')[0]).strip().replace('^', '\n')
+        except:pass
+
+        job_type_desc = ''
+        try:job_type_desc = re.sub('\s+', ' ', unicode(etree.HTML(page).xpath('//div[@class="mt10"][1]/p[1]')[0].xpath('string(.)'))).strip()
+        except:pass
+
+        job_keyword_desc = ''
+        try:job_keyword_desc = re.sub('\s+', ' ', unicode(etree.HTML(page).xpath('//div[@class="mt10"][1]/p[2]')[0].xpath('string(.)'))).strip()
+        except:pass
+
+        work_address = ''
+        try:work_address=unicode(etree.HTML(page).xpath('//div[@class="bmsg inbox"][1]/p[1]')[0].xpath('string(.)')).strip()
+        except:pass
+
+        try:
+            ogrin = JobDetail.objects.get(id=job_id)
+            ogrin.job_name = job_name
+            ogrin.company_name = company_name
+            ogrin.company_desc = company_desc
+            ogrin.job_jtag = job_jtag
+            ogrin.job_welfare = job_welfare
+            ogrin.job_detail_desc = job_detail_desc
+            ogrin.job_type_desc = job_type_desc
+            ogrin.job_keyword_desc = job_keyword_desc
+            ogrin.work_address = work_address
+            ogrin.save()
+        except JobDetail.DoesNotExist:
+            JobDetail.objects.create(id=job_id, job_name=job_name, company_name=company_name, company_desc=company_desc,
+                                     job_jtag=job_jtag,
+                                     job_welfare=job_welfare, job_detail_desc=job_detail_desc,
+                                     job_type_desc=job_type_desc,
+                                     job_keyword_desc=job_keyword_desc, work_address=work_address)
+        except Exception as e:
+            logger.error(u'保存job51详细信息异常：' + str(e) + u',当前jobId为：' + str(job_id))
+    except Exception as error:
+        logger.error(u'抓取并保存51job详细数据异常：' + str(error)+ u',当前jobId为：' + str(job_id))
+
+
 
 
 def startCrawler():

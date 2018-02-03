@@ -42,6 +42,17 @@ def addJob51Crawler():
     except Exception as e:
         __logger.error(u'添加51job爬虫任务异常：'+e.message)
 
+def addJob51DetailCrawler():
+    __logger.info(u'添加51job详情爬虫任务')
+    try:
+        orgin = cache.get('task_list')
+        if orgin==None:
+            orgin=[]
+        orgin.append('job51DetailCrawler')
+        cache.set('task_list', orgin)
+    except Exception as e:
+        __logger.error(u'添加51job详情爬虫任务异常：'+e.message)
+
 
 def runTaskCache():
     try:

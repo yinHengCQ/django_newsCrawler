@@ -19,7 +19,14 @@ def job51Crawler():
     addJob51Crawler()
 
 @task
+def job51DetailCrawler():
+    addJob51DetailCrawler()
+
+@task
 def runTask():
     runTaskCache()
+
+
+
 
 
