@@ -40,7 +40,7 @@ def __run(list_task):
             if task_name=='newsCrawler':
                 key='http://business.sohu.com/'
                 obj.get(key)
-                threading._start_new_thread(__save_news_data,(key,BeautifulSoup(obj.page_source).body,))
+                threading._start_new_thread(__save_news_data,(key,obj.page_source,))
             elif task_name=='proxyIpCrawler':
                 key='http://www.xicidaili.com/nn/'
                 obj.get(key)
@@ -77,39 +77,23 @@ def __run(list_task):
 
 
 ################################################################################################################
-def __get_news_data(key,responseBody):
-    list_str = str(responseBody.find_all('div', attrs={"data-newsid": not "", "data-role": "news-item"}))
-    for var in list_str.split('</div>, <div'):
-        soup=BeautifulSoup(var)
-        # soup = BeautifulSoup(unicode(var,'unicode-escape'))
-
-        # 获取标题
-        title = unicode.encode(soup.h4.text, 'utf-8').replace('\n', '').replace('\r', '').replace(' ', '')
-
-        # 获取Url
-        url = unicode.encode('http:' + BeautifulSoup(str(soup.h4)).a.get("href"), 'utf-8')
-
-        # 获取发布来源
-        publisher = unicode.encode(BeautifulSoup(str(soup.select('span[class="name"]'))).a.text, 'utf-8')
-        # publisher = unicode(publisher, 'unicode-escape')
-
-        #获取当前评论
-        comment_count=unicode.encode(BeautifulSoup(str(soup.select('a[class="com"]'))).span.text, 'utf-8')
-        # comment_count = unicode(comment_count, 'unicode-escape')
-
-        # 获取发布时间
-        pub_time = BeautifulSoup(str(soup.select('span[class="time"]'))).span.get('data-val')
+def __get_news_data(key,page):
+    temp = etree.HTML(page).xpath('//div[@class="news-wrapper"]/div[@data-role="news-item"]')
+    for var in temp:
+        news_url = 'http:' + unicode(var.xpath('h4/a[1]/@href')[0])
+        news_id = re.sub('\D', '', news_url)
+        news_title = unicode(var.xpath('h4/a[1]/text()')[0].encode('unicode-escape').decode('string_escape').strip(), 'unicode-escape')
+        news_publisher = unicode(var.xpath('div/span[@class="name"]/a[1]/text()')[0].encode('unicode-escape').decode('string_escape').strip(),'unicode-escape')
+        comment_count = unicode(var.xpath('div/a[@class="com"]/span[1]/text()')[0])
+        pub_time = unicode(var.xpath('div/span[@class="time"]/@data-val')[0])
         pub_date = int2date_YMDHMS(int(pub_time))
 
-        #根据Url中的数字生成主键
-        id = re.sub('\D', '', url)
-
         try:
-            orgin=news.objects.get(id=id)
+            orgin=news.objects.get(id=news_id)
             orgin.comment_count=comment_count
             orgin.save()
         except news.DoesNotExist:
-            news.objects.create(id=id,title=title,url=url,publisher=publisher,comment_count=comment_count,pub_date=pub_date)
+            news.objects.create(id=news_id,title=news_title,url=news_url,publisher=news_publisher,comment_count=comment_count,pub_date=pub_date)
 
 def __save_news_data(key,responseBody):
     try:
