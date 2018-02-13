@@ -1,0 +1,13 @@
+#########################
+uwsgi for django
+#########################
+yum install python-devel.x86_64
+pip install uwsgi
+
+
+#########################
+supervisor for celery
+#########################
+pip install supervisor
+echo_supervisord_conf > /etc/supervisord.conf
+vi /etc/supervisord.conf (add celery conf)
