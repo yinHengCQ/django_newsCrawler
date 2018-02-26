@@ -16,3 +16,9 @@ vi /etc/supervisord.conf (add celery conf)
 
 #########################
 start new docker container slave:docker run -itd -p 8001:8000 image_name:tag bash
+
+
+#########################
+in docker container,before run geckodriver:
+yum install Xvfb
+dbus-uuidgen >/etc/machine-id
