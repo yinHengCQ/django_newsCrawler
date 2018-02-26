@@ -15,7 +15,7 @@ vi /etc/supervisord.conf (add celery conf)
 
 
 #########################
-start new docker container slave:docker run -itd -p 8001:8000 image_name:tag bash
+start new docker container slave:docker run -itd -p 8001:8000 --ulimit core=0 image_name:tag bash
 
 
 #########################
