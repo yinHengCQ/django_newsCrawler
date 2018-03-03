@@ -15,4 +15,35 @@ vi /etc/supervisord.conf (add celery conf)
 
 
 #########################
-start new docker container slave:docker run -itd -p 8001:8000 image_name:tag bash
+start new docker container slave:docker run -itd -p 8001:8000 --ulimit core=0 image_name:tag bash
+
+
+#########################
+change docker loop-lvm to direct-lvm:
+pvcreate /dev/sdb2
+
+vgcreate docker /dev/sdb2
+
+lvcreate --wipesignatures y -n thinpool -l 95%VG docker
+lvcreate --wipesignatures y -n thinpoolmeta -l 1%VG docker
+
+lvconvert -y --zero n -c512K --thinpool docker/thinpool --poolmetadata docker/thinpoolmeta
+
+vi /etc/lvm/profile/docker-thinpool.profile
+    activation{
+       thin_pool_autoextend_threshold=80
+       thin_pool_autoextend_percent=20
+    }
+
+lvchange --metadataprofile docker-thinpool docker/thinpool
+
+vi /etc/sysconfig/docker-storage
+    DOCKER_STORAGE_OPTIONS=--storage-driver devicemapper --storage-opt dm.fs=xfs --storage-opt dm.thinpooldev=/dev/mapper/docker-thinpool --storage-opt dm.use_deferred_removal=true
+    
+rm -rivf /var/lib/docker/*
+
+
+#########################
+in docker container,before run geckodriver:
+yum install Xvfb
+dbus-uuidgen >/etc/machine-id
