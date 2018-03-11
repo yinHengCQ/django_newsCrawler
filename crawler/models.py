@@ -26,7 +26,7 @@ class proxyIP(models.Model):
     modifyTime=models.DateTimeField(auto_now=True)
 
 class job51(models.Model):
-    id=models.IntegerField(primary_key=True)
+    job_id=models.IntegerField()
     job_name=models.CharField(max_length=100)
     job_url=models.CharField(max_length=300)
     company_name=models.CharField(max_length=60)
@@ -36,12 +36,12 @@ class job51(models.Model):
     pub_date=models.CharField(max_length=10)
     salary_low=models.IntegerField()
     salary_high=models.IntegerField()
-    createTime=models.DateTimeField(auto_now_add=True)
+    createTime=models.DateTimeField(auto_now_add=True,null=True)
     modifyTime=models.DateTimeField(auto_now=True)
 
 
 class JobDetail(models.Model):
-    id=models.CharField(max_length=10,primary_key=True)
+    job_id=models.IntegerField()
     job_name=models.CharField(max_length=100)
     company_name=models.CharField(max_length=60)
     company_desc=models.CharField(max_length=200)
@@ -51,5 +51,5 @@ class JobDetail(models.Model):
     job_type_desc=models.CharField(max_length=300)
     job_keyword_desc = models.CharField(max_length=300)
     work_address=models.CharField(max_length=200)
-    createTime=models.DateTimeField(auto_now_add=True)
+    createTime=models.DateTimeField(auto_now_add=True,null=True)
     modifyTime=models.DateTimeField(auto_now=True)
