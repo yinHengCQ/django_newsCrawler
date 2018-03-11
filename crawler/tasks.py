@@ -2,7 +2,7 @@ from __future__ import absolute_import
 
 from celery import task
 from crawler.service.crawlerTaskService import *
-
+from crawler.service.urllib_download_data import download_51job
 
 
 
@@ -26,6 +26,9 @@ def job51DetailCrawler():
 def runTask():
     runTaskCache()
 
+@task
+def urllib_51_crawler():
+    download_51job()
 
 
 
