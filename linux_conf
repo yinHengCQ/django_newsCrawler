@@ -44,6 +44,14 @@ rm -rivf /var/lib/docker/*
 
 
 #########################
+change docker resource:
+vi /etc/docker/daemon.json
+{
+  "registry-mirrors": ["https://registry.docker-cn.com"]
+}
+
+
+#########################
 in docker container,before run geckodriver:
 yum install Xvfb
 dbus-uuidgen >/etc/machine-id
