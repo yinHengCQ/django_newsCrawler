@@ -65,4 +65,8 @@ ntpdate us.pool.ntp.org
 yum install -y ntpdate
 
 
+#########################
+centOS7 install python3 exec make error "*** No targets specified and no makefile found":
+yum groupinstall "Development tools" 
+yum install zlib-devel bzip2-devel openssl-devel ncurses-devel sqlite-devel readline-devel tk-devel
 
