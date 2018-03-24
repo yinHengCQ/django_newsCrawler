@@ -44,6 +44,29 @@ rm -rivf /var/lib/docker/*
 
 
 #########################
+change docker resource:
+vi /etc/docker/daemon.json
+{
+  "registry-mirrors": ["https://registry.docker-cn.com"]
+}
+
+
+#########################
 in docker container,before run geckodriver:
 yum install Xvfb
 dbus-uuidgen >/etc/machine-id
+
+
+#########################
+sync sys.date:
+cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+ntpdate us.pool.ntp.org
+
+yum install -y ntpdate
+
+
+#########################
+centOS7 install python3 exec make error "*** No targets specified and no makefile found":
+yum groupinstall "Development tools" 
+yum install zlib-devel bzip2-devel openssl-devel ncurses-devel sqlite-devel readline-devel tk-devel
+
