@@ -4,6 +4,7 @@ from scrapy.selector import Selector
 from crawler.scrapy_crawler.scrapy_crawler.items import Job51CrawlerItem
 from crawler.utils.strUtil import salary_unicode2int
 from scrapy import log
+from crawler.utils.cacheUtil import is_job_id_exists
 
 
 
@@ -16,7 +17,7 @@ class Job51Spider(scrapy.Spider):
     name = "job51_crawler"
     url_template="http://search.51job.com/list/060000,000000,0000,00,9,99,%2B,2,{0}.html"
     start_urls=[]
-    for var in range(1,2001):
+    for var in range(1,2):
         start_urls.append(url_template.format(var))
 
     def parse(self, response):
@@ -29,21 +30,23 @@ class Job51Spider(scrapy.Spider):
             try:
                 item = Job51CrawlerItem()
                 item['job_id'] = var.xpath('p[1]/input[1]/@value').extract()[0]
+                if is_job_id_exists(item['job_id']):continue
+
                 item['job_name'] = var.xpath('p[1]/span[1]/a[1]/@title').extract()[0]
                 item['job_url'] = var.xpath('p[1]/span[1]/a[1]/@href').extract()[0]
                 detail_urls.append(item['job_url'])
                 item['company_name'] = var.xpath('span[@class="t2"][1]/a[1]/@title').extract()[0]
                 item['company_url'] = var.xpath('span[@class="t2"][1]/a[1]/@href').extract()[0]
                 try:item['job_address'] = var.xpath('span[@class="t3"][1]/text()').extract()[0]
-                except:item['job_address']=''
+                except:item['job_address'] = ''
                 try:item['job_salary'] = var.xpath('span[@class="t4"][1]/text()').extract()[0]
-                except:item['job_salary']=''
+                except:item['job_salary'] = ''
                 item['pub_date'] = var.xpath('span[@class="t5"][1]/text()').extract()[0]
                 salary_temp = salary_unicode2int(item['job_salary'])
                 if salary_temp == None:salary_low = 0;salary_high = 0
                 else:salary_low = salary_temp.get('low');salary_high = salary_temp.get('high')
-                item['salary_low']=salary_low
-                item['salary_high']=salary_high
+                item['salary_low'] = salary_low
+                item['salary_high'] = salary_high
                 yield scrapy.Request(item['job_url'], meta={'item': item}, callback=self.parse_detail)
             except:pass
 
