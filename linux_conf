@@ -19,6 +19,15 @@ start new docker container slave:docker run -itd -p 8001:8000 --ulimit core=0 im
 start splash:docker run -p 5023:5023 -p 8050:8050 -p 8051:8051 scrapinghub/splash
 
 
+
+#########################
+open port for firewall:
+firewall-cmd --zone=public --add-port=8050/tcp --permanent
+firewall-cmd --reload
+firewall-cmd --zone=public --query-port=8050/tcp
+
+
+
 #########################
 change docker loop-lvm to direct-lvm:
 pvcreate /dev/sdb2
