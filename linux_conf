@@ -96,3 +96,8 @@ cd tesseract-3.04.00
 ./configure  
 make && make install  
 
+
+#########################
+firefox:
+http://ftp.mozilla.org/pub/firefox/releases/
+
