@@ -30,7 +30,7 @@ class Job51Spider(scrapy.Spider):
             try:
                 item = Job51CrawlerItem()
                 item['job_id'] = var.xpath('p[1]/input[1]/@value').extract()[0]
-                if is_job_id_exists(item['job_id']):continue
+                # if is_job_id_exists(item['job_id']):continue
 
                 item['job_name'] = var.xpath('p[1]/span[1]/a[1]/@title').extract()[0]
                 item['job_url'] = var.xpath('p[1]/span[1]/a[1]/@href').extract()[0]
