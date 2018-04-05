@@ -80,3 +80,24 @@ centOS7 install python3 exec make error "*** No targets specified and no makefil
 yum groupinstall "Development tools" 
 yum install zlib-devel bzip2-devel openssl-devel ncurses-devel sqlite-devel readline-devel tk-devel
 
+
+#########################
+install tesseract:
+yum install autoconf automake libtool
+yum install libjpeg-devel libpng-devel libtiff-devel zlib-devel
+wget http://www.leptonica.com/source/leptonica-1.72.tar.gz
+tar -xzvf leptonica-1.72.tar.gz
+cd leptonica-1.72
+./configure  
+make && make install  
+wget wget https://github.com/tesseract-ocr/tesseract/archive/3.04.00.tar.gz  
+tar -xvzf  3.04.00.tar.gz    
+cd tesseract-3.04.00 
+./configure  
+make && make install  
+
+
+#########################
+firefox:
+http://ftp.mozilla.org/pub/firefox/releases/
+
