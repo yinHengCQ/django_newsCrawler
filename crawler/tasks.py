@@ -4,8 +4,9 @@ from celery import task
 from crawler.service.crawlerTaskService import *
 from crawler.service.urllib_download_data import download_51job
 from crawler.service.urlib_download_58resume import download_data
-import os
+import os,logging
 
+__logger=logging.getLogger('django')
 
 @task
 def newsCrawler():
@@ -36,6 +37,9 @@ def scrapy_all_job51():
     os.system("cd C:/Users/Administrator/PycharmProjects/django_newsCrawler/crawler/scrapy_crawler && scrapy crawl job51_crawler")
 
 @task
-def urlib_58_resume():
-    download_data("http://cq.58.com/searchjob/pn1")
+def urlib_58_resume(base_url,begin_index,end_index):
+    __logger.info('base_url:{0};begin_index:{1};end_index:{2}'.format(base_url,begin_index,end_index))
+    # download_data("http://cq.58.com/searchjob/pn1")
+    for index in range(begin_index,end_index+1):
+        download_data(base_url.format(index))
 

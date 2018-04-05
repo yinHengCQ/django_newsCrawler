@@ -13,9 +13,14 @@ class job51Admin(admin.ModelAdmin):
 class job51DetailAdmin(admin.ModelAdmin):
     list_display = ['id','job_id','job_name','company_name','company_desc','job_jtag','job_welfare','job_detail_desc',
                     'job_type_desc','job_keyword_desc','work_address','createTime','modifyTime']
+class resume58Admin(admin.ModelAdmin):
+    list_display = ['id','resume_id','name','sex','age','work_age','education','hope_job','now_job',
+                    'hope_work_address','mark','createTime','modifyTime']
+
 
 
 admin.site.register(news,newsAdmin)
 admin.site.register(proxyIP,proxyIpAdmin)
 admin.site.register(job51,job51Admin)
 admin.site.register(JobDetail,job51DetailAdmin)
+admin.site.register(Resume58,resume58Admin)

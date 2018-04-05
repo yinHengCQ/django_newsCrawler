@@ -84,8 +84,6 @@ WSGI_APPLICATION = 'django_newsCrawler.wsgi.application'
 
 DATABASES = {
     'default': {
-        # 'ENGINE': 'django.db.backends.sqlite3',
-        # 'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
         'ENGINE':'django.db.backends.mysql',
         'NAME':'newscrawler',
         'USER':'root',
@@ -93,6 +91,17 @@ DATABASES = {
         'HOST':'127.0.0.1',
         'PORT':'3306',
     }
+    # 'default': {
+    #     'ENGINE': 'sqlserver',
+    #     'NAME': 'sqlserver',
+    #     'HOST': '127.0.0.1',
+    #     'PORT': '1433',
+    #     'USER': 'sa',
+    #     'PASSWORD': 'root',
+    #     'OPTIONS': {
+    #                    'DRIVER': 'SQL Server Native Client 10.0',
+    #                },
+    # }
 }
 
 
@@ -163,7 +172,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT=os.path.join(BASE_DIR,'static')
 
-STATICFILES_DIRS=(os.path.join(BASE_DIR,'static/bootstrap'),)
+STATICFILES_DIRS=(os.path.join(BASE_DIR,'static/bootstrap'),os.path.join(BASE_DIR,'static/image'),)
 
 ###Broker
 djcelery.setup_loader()
@@ -172,3 +181,4 @@ CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
 CELERYD_LOG_FILE="C:/Users/Administrator/Django_Log/celery/%n%I.log"
 CELERYBEAT_LOG_FILE="C:/Users/Administrator/Django_Log/celery/beat.log"
 
+CELERYD_CONCURRENCY = 4
